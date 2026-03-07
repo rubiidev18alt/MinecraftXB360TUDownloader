@@ -39,8 +39,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/minecraft-xbox360-tu-downloader.git
-    cd minecraft-xbox360-tu-downloader
+    git clone https://github.com/Rubiidev18alt/MinecraftXB360TUDownloader.git
+    cd MinecraftXB360TUDownloader
     ```
 
 2.  **Install dependencies**

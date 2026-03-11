@@ -239,13 +239,20 @@ function App() {
     "Nostalgia included!",
     "Don't dig down!",
     "Creeper? Aww man!",
-    "Herobrine removed."
+    "Herobrine removed.",
+    "Crafted for preservation!",
+    "TU75 lives here!",
+    "Blocky and beautiful!",
+    "Time to revisit Tutorial World!",
+    "Keep calm and mine on!"
   ];
 
   useEffect(() => {
-    // Random splash text on load
-    setSplashText(splashes[Math.floor(Math.random() * splashes.length)]);
-  }, []);
+    // Random splash text on load + TU changes
+    const dynamicSplash = tuNumber === 75 ? 'Final update hype!' : `Now loading TU${tuNumber}!`;
+    const allSplashes = [...splashes, dynamicSplash];
+    setSplashText(allSplashes[Math.floor(Math.random() * allSplashes.length)]);
+  }, [tuNumber]);
 
   useEffect(() => {
     const baseUrl = "https://archive.org/download/Minecraft-Xbox360-TUs/Minecraft%20Xbox%20360%20Edition%20TUs";
@@ -269,7 +276,11 @@ function App() {
   }, [tuNumber]);
 
   const handleDownload = () => {
-    window.open(downloadUrl, '_blank');
+    window.location.href = downloadUrl;
+  };
+
+  const handleOpenDirectLinkInNewTab = () => {
+    window.open(downloadUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleCopyLink = () => {
@@ -281,29 +292,30 @@ function App() {
   const currentChangelog = CHANGELOGS[tuNumber];
 
   return (
-    <div className="min-h-screen bg-minecraft-dirt flex flex-col items-center justify-center p-4 selection:bg-yellow-400 selection:text-black font-minecraft relative overflow-x-hidden">
+    <div className="min-h-screen bg-minecraft-dirt flex flex-col items-center justify-center selection:bg-yellow-400 selection:text-black font-minecraft relative overflow-x-hidden">
       
       {/* Header Section */}
-      <div className="text-center mb-8 relative z-10">
-        <h1 className="minecraft-logo-text mb-2 text-6xl md:text-8xl drop-shadow-xl">MINECRAFT</h1>
-        <h2 className="text-xl md:text-2xl text-gray-300 mc-label tracking-widest uppercase bg-black/40 px-4 py-1 inline-block border-2 border-gray-600">
+      <div className="text-center mb-10 relative z-10 mc-hero-banner px-5 py-6 md:px-10 md:py-8">
+        <h1 className="minecraft-logo-text mb-2 text-5xl md:text-8xl drop-shadow-xl">MINECRAFT</h1>
+        <h2 className="text-lg md:text-2xl text-gray-300 mc-label tracking-widest uppercase bg-black/45 px-4 py-1 inline-block border-2 border-gray-600">
           Xbox 360 TU Downloader
         </h2>
-        <div className="text-yellow-400 text-lg md:text-xl animate-bounce mt-2 transform rotate-[-5deg] drop-shadow-md whitespace-nowrap absolute right-0 -bottom-6 md:-right-12 md:bottom-2" 
+        <div className="text-yellow-300 text-base md:text-xl animate-bounce mt-2 transform rotate-[-8deg] drop-shadow-md whitespace-nowrap absolute -right-2 -bottom-7 md:-right-16 md:bottom-1 bg-black/35 border border-yellow-700/60 px-2 py-0.5" 
              style={{ textShadow: '2px 2px 0 #3f3f00' }}>
           {splashText}
         </div>
       </div>
 
       {/* Main Content Box */}
-      <div className="w-full max-w-2xl relative z-10">
-        <div className="bg-[#c6c6c6] border-4 border-black p-1 shadow-[8px_8px_0_rgba(0,0,0,0.5)]">
-          <div className="bg-[#3b3b3b] border-2 border-[#585858] p-4 md:p-6 text-center space-y-6 md:space-y-8 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+      <div className="mc-shell relative z-10">
+        <div className="mc-content-stack">
+        <div className="mc-frame">
+          <div className="mc-core-panel p-5 md:p-8 text-center space-y-7 md:space-y-9">
             
             {/* Selection Area */}
             <div className="space-y-4">
               <div className="flex justify-between items-end">
-                 <label className="block text-xl md:text-2xl mc-label text-gray-200 text-left">Select Update</label>
+                 <label className="block text-xl md:text-2xl mc-label text-gray-200 text-left px-2 py-1">Select Update</label>
                  <button 
                     onClick={() => setTuNumber(75)}
                     className="text-xs text-green-400 hover:text-green-300 hover:underline cursor-pointer font-mono flex items-center gap-1"
@@ -327,14 +339,14 @@ function App() {
                 </select>
               </div>
 
-              <div className="text-[#a0a0a0] text-sm md:text-base font-mono bg-black/30 p-2 border border-black/20 rounded">
+              <div className="text-[#a0a0a0] text-sm md:text-base font-mono bg-black/30 py-3 px-5 border border-black/20 rounded">
                 {tuNumber === 1 ? 'TU1 (Original Release)' : tuNumber === 75 ? 'TU75 (Undocumented Update)' : `TU${tuNumber}`}
               </div>
             </div>
 
             {/* Metadata Grid */}
             {currentChangelog && (currentChangelog.date || currentChangelog.size) && (
-               <div className="grid grid-cols-2 gap-2 text-gray-400 text-sm font-mono border-t border-b border-white/10 py-3">
+               <div className="grid grid-cols-2 gap-2 text-gray-400 text-sm font-mono border-t border-b border-white/10 py-4 px-4">
                   {currentChangelog.date && (
                     <div className="flex flex-col items-center">
                       <div className="flex items-center gap-1 text-gray-500 mb-1"><Calendar className="w-3 h-3" /> Released</div>
@@ -351,29 +363,39 @@ function App() {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col items-center gap-6 py-3">
               <button
                 onClick={handleDownload}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
-                className="mc-button w-full py-4 px-6 text-xl md:text-2xl flex items-center justify-center gap-3 group relative overflow-hidden"
+                className="mc-button w-[72%] md:w-[44%] py-6 px-10 text-lg md:text-xl flex items-center justify-center gap-3 group relative overflow-hidden mb-2"
               >
                 <div className={`absolute inset-0 bg-white/10 transform transition-transform duration-300 ${isHovering ? 'translate-y-0' : 'translate-y-full'}`} />
                 <Download className={`w-6 h-6 md:w-8 md:h-8 ${isHovering ? 'animate-bounce' : ''} relative z-10`} />
-                <span className="relative z-10">Download TU{tuNumber}</span>
+                <span className="relative z-10 px-2 py-1">Download TU{tuNumber}</span>
               </button>
               
-              <button
-                onClick={handleCopyLink}
-                className="mc-button-secondary w-full py-2 px-4 text-sm flex items-center justify-center gap-2 group text-gray-300 hover:text-white transition-colors"
-              >
-                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                <span>{copied ? 'Copied to Clipboard!' : 'Copy Direct Link'}</span>
-              </button>
+              <div className="flex flex-col items-center gap-4 w-full pt-2 border-t border-white/10">
+                <button
+                  onClick={handleOpenDirectLinkInNewTab}
+                  className="mc-button-secondary w-[72%] md:w-[44%] py-5 px-9 text-sm md:text-base flex items-center justify-center gap-2 group text-gray-300 hover:text-white transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="px-2 py-1">Open Direct Link (New Tab)</span>
+                </button>
+
+                <button
+                  onClick={handleCopyLink}
+                  className="mc-button-secondary w-[72%] md:w-[44%] py-5 px-9 text-sm md:text-base flex items-center justify-center gap-2 group text-gray-300 hover:text-white transition-colors"
+                >
+                  {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                  <span className="px-2 py-1">{copied ? 'Copied to Clipboard!' : 'Copy Direct Link'}</span>
+                </button>
+              </div>
             </div>
 
             {/* File Info */}
-            <div className="bg-[#2b2b2b] p-3 border-2 border-[#1a1a1a] text-left text-gray-500 font-mono text-xs break-all relative group">
+            <div className="mc-url-box py-5 px-7 text-left text-gray-300 font-mono text-xs md:text-sm break-all relative group mt-3">
               <div className="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                  <ExternalLink className="w-3 h-3" />
               </div>
@@ -383,11 +405,13 @@ function App() {
           </div>
         </div>
 
+        <div className="mc-divider my-1" />
+
         {/* Changelog Panel (Conditional) */}
         {currentChangelog && (
-          <div className="mt-8 bg-[#c6c6c6] border-4 border-black p-1 shadow-[8px_8px_0_rgba(0,0,0,0.5)] animate-fade-in relative z-0 transform hover:-translate-y-1 transition-transform duration-300">
-             <div className="bg-[#3e3226] border border-[#2b231a] p-4 md:p-6 text-white bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] shadow-inner">
-                <h3 className="text-xl md:text-2xl mc-label mb-4 flex items-center gap-2 text-yellow-200 border-b-2 border-[#5c4a38] pb-2">
+          <div className="mc-frame animate-fade-in relative z-0 transform hover:-translate-y-1 transition-transform duration-300">
+             <div className="bg-[#3e3226] border border-[#2b231a] py-5 px-6 md:py-7 md:px-8 text-white bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')] shadow-inner">
+                <h3 className="text-xl md:text-2xl mc-label mb-4 flex items-center gap-2 text-yellow-200 border-b-2 border-[#5c4a38] pb-3 px-2 py-2">
                   <BookOpen className="text-yellow-400 w-5 h-5 md:w-6 md:h-6" /> {currentChangelog.title}
                 </h3>
                 <ul className="list-disc list-inside space-y-2 text-base md:text-lg text-[#ddd] font-serif tracking-wide">
@@ -399,24 +423,26 @@ function App() {
           </div>
         )}
 
+        <div className="mc-divider my-1" />
+
         {/* Instructions Panel */}
-        <div className="mt-8 bg-[#c6c6c6] border-4 border-black p-1 shadow-[8px_8px_0_rgba(0,0,0,0.5)]">
-          <div className="bg-[#242424] border border-[#1a1a1a] p-4 md:p-6">
-            <h3 className="text-xl md:text-2xl mc-label mb-4 flex items-center gap-2 border-b-2 border-[#444] pb-2 text-gray-200">
+        <div className="mc-frame">
+          <div className="bg-[#242424] border border-[#1a1a1a] py-5 px-6 md:py-7 md:px-8 mc-core-panel">
+            <h3 className="text-xl md:text-2xl mc-label mb-4 flex items-center gap-2 border-b-2 border-[#444] pb-3 px-2 py-2 text-gray-200">
               <Info className="text-blue-400" /> Installation Guide
             </h3>
             
             {/* RGH / JTAG Instructions */}
-            <div className="space-y-4 text-base md:text-lg text-gray-300 mb-8">
-              <h4 className="text-lg md:text-xl mc-label text-orange-300 border-l-4 border-orange-500 pl-2">Xbox 360 (RGH/JTAG)</h4>
-              <div className="flex gap-4 items-start group">
+            <div className="space-y-4 text-base md:text-lg text-gray-300 mb-8 mc-callout">
+              <h4 className="text-lg md:text-xl mc-label text-orange-300 border-l-4 border-orange-500 pl-3 py-1 pr-2">Xbox 360 (RGH/JTAG)</h4>
+              <div className="flex gap-4 items-start group mc-step">
                 <div className="bg-[#333] w-8 h-8 flex items-center justify-center border border-[#555] text-white font-bold flex-shrink-0 group-hover:bg-[#444] transition-colors">1</div>
                 <div>
                   <p className="mb-1 text-white">Download the file.</p>
                 </div>
               </div>
 
-              <div className="flex gap-4 items-start group">
+              <div className="flex gap-4 items-start group mc-step">
                 <div className="bg-[#333] w-8 h-8 flex items-center justify-center border border-[#555] text-white font-bold flex-shrink-0 group-hover:bg-[#444] transition-colors">2</div>
                 <div>
                   <p className="mb-1 text-white">Transfer to your Xbox 360.</p>
@@ -424,7 +450,7 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex gap-4 items-start group">
+              <div className="flex gap-4 items-start group mc-step">
                 <div className="bg-[#333] w-8 h-8 flex items-center justify-center border border-[#555] text-white font-bold flex-shrink-0 group-hover:bg-[#444] transition-colors">3</div>
                 <div>
                   <p className="mb-1 text-white">Place the file in the correct path:</p>
@@ -440,11 +466,11 @@ function App() {
             </div>
 
             {/* Xenia Instructions */}
-            <div className="border-t border-[#444] pt-6 space-y-4 text-base md:text-lg text-gray-300">
-               <h4 className="text-lg md:text-xl mc-label text-purple-300 border-l-4 border-purple-500 pl-2 flex items-center gap-2">
+            <div className="border-t border-[#444] pt-6 space-y-4 text-base md:text-lg text-gray-300 mc-callout">
+               <h4 className="text-lg md:text-xl mc-label text-purple-300 border-l-4 border-purple-500 pl-3 py-1 pr-2 flex items-center gap-2">
                  <Monitor className="w-5 h-5" /> Xenia Canary (Experimental)
                </h4>
-               <div className="space-y-3 bg-black/20 p-4 rounded border border-white/5">
+               <div className="space-y-3 bg-black/20 p-4 rounded border border-white/5 mc-step">
                  <div className="flex gap-3">
                    <span className="text-purple-400 font-bold min-w-[20px]">1.</span>
                    <span>Open Minecraft in Xenia.</span>
@@ -476,7 +502,7 @@ function App() {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-[#555] text-xs md:text-sm mt-12 pb-8">
+        <div className="text-center text-[#6e6e6e] text-xs md:text-sm mt-4 pb-6">
           <p className="mb-2">Not affiliated with Mojang, Microsoft, or 4J Studios.</p>
           <p>Files hosted by Archive.org. Built for preservation.</p>
           <div className="mt-4 flex justify-center gap-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
@@ -487,7 +513,8 @@ function App() {
           </div>
         </div>
       </div>
-      <SteveGuide />
+      </div>
+      {/* <SteveGuide /> */}
     </div>
   );
 }
